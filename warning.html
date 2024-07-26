@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warning Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FF0000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .warning-container {
+            background-color: #FFF;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #d9534f; /* Red color to indicate urgency */
+        }
+
+        .countdown {
+            font-size: 24px;
+            color: red; /* Red color for countdown */
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .warning-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-container">
+        <h1>WARNING: YOUR COMPUTER IS INFECTED!</h1>
+        <p>Your computer will totally reset in <span id="countdown" class="countdown">10:00</span></p>
+        <p class="warning-text">
+            Make sure to remove all the files from your computer, else they will be deleted.
+            We will not be responsible for any damage made to your device after this reset.
+            Thank you for listening carefully.
+        </p>
+    </div>
+    <audio id="warningSound" src="warning.mp3" preload="auto"></audio>
+    <script>
+        // Countdown function
+        function startCountdown(duration) {
+            let timer = duration, minutes, seconds;
+            const countdownElement = document.getElementById('countdown');
+            const warningSound = document.getElementById('warningSound');
+
+            // Handle audio errors
+            warningSound.onerror = function() {
+                console.error("Audio file failed to load. Check the file path and format.");
+            };
+
+            function updateCountdown() {
+                minutes = Math.floor(timer / 60);
+                seconds = timer % 60;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                countdownElement.textContent = `${minutes}:${seconds}`;
+
+                // Play the sound when the page loads
+                if (timer === duration) {
+                    warningSound.play().catch(error => {
+                        console.error("Failed to play the audio:", error);
+                    });
+                }
+
+                if (--timer < 0) {
+                    clearInterval(intervalId);
+                    countdownElement.textContent = "Time's up!";
+                    warningSound.play().catch(error => {
+                        console.error("Failed to play the audio:", error);
+                    }); // Play the sound again when time is up
+                }
+            }
+
+            updateCountdown();
+            const intervalId = setInterval(updateCountdown, 1000);
+        }
+
+        // Start countdown with 10 minutes (600 seconds)
+        window.onload = function() {
+            startCountdown(600);
+        };
+    </script>
+</body>
+</html>
